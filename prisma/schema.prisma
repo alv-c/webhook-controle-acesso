@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model controle_acesso_wpp {
+  id         Int                        @id @default(autoincrement())
+  data_json  Json
+  created_at DateTime                   @default(now())
+  updated_at DateTime                   @default(now())
+  status     controle_acesso_wpp_status @default(pendente)
+}
+
+enum controle_acesso_wpp_status {
+  pendente
+  aberta
+}
