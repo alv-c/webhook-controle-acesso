@@ -78,7 +78,7 @@ export const saveMsg = async (body: any) => {
             return result[0]?.id || null;
         });
         id = response;
-        let returnRequest = await sendRequestApi(body);
+        let returnRequest = await sendRequestApi(body, id);
         let updateResult: any = null;
         if (returnRequest) {
             updateResult = await prisma.$transaction(async (prisma: any) => {
@@ -86,7 +86,7 @@ export const saveMsg = async (body: any) => {
                 return updateSuccess;
             });
         }
-        if(updateResult) return true;
+        if (updateResult) return true;
         return false;
     } catch (e) {
         console.log('Erro ao salvar a mensagem:', e);
@@ -94,7 +94,7 @@ export const saveMsg = async (body: any) => {
     }
 };
 
-const sendRequestApi = async (body: any) => {
+const sendRequestApi = async (body: any, id: number | null) => {
     try {
         if (body.whatsapp) {
             const whatsapp = body.whatsapp;
@@ -121,6 +121,7 @@ const sendRequestApi = async (body: any) => {
         return true;
     } catch (e) {
         console.log('Erro ao enviar requisição para a API:', e);
+        if (id) await deleteCAById(id);
         throw new Error('Erro ao enviar requisição para a API');
     }
 };
@@ -139,6 +140,25 @@ const updateOrderStatus = async (prisma: any, id: number | null) => {
         return true;
     } catch (e) {
         console.log(`Erro ao atualizar ordem de serviço com id ${id}:`, e);
+        return false;
+    }
+};
+
+const deleteCAById = async (id: number | null) => {
+    if (!id) {
+        console.log('ID inválido para exclusão');
+        return false;
+    }
+    try {
+        await prisma.$transaction(async (prisma) => {
+            await prisma.controle_acesso_wpp.delete({
+                where: { id },
+            });
+            console.log(`C.A com ID ${id} foi excluído com sucesso.`);
+        });
+        return true;
+    } catch (e) {
+        console.log('Erro ao excluir a C.A:', e);
         return false;
     }
 };

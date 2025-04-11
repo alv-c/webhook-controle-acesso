@@ -18,7 +18,7 @@ export const main = async (data: any) => {
                     particao: decryptedJson.particao,
                 });
                 if (retornoSave) msg = `Solicitação emitida com sucesso!`;
-                else msg = `Esta conta já *possui uma solicitação C.A com o status 'pendente'*. Por favor, *aguarde ou ligue em caso de emergência 0800-062-1800*`;
+                else msg = `Este número *não tem autorização para efetuar esta operação*. Por favor, *contate seu administrador para a solicitação da mesma: 0800-062-1800*`;
                 await sendMsg(data, msg);
             } catch (error) {
                 msg = `Erro ao tentar emitir *C.A*. Por favor, tente novamente em alguns instantes!`;
